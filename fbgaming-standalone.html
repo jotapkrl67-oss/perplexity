@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FbgaminGGMAX - Perplexity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2d1b4e 0%, #1a0f2e 50%, #0a0a0a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        header {
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .header-text h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .header-text p {
+            font-size: 12px;
+            color: #c084fc;
+        }
+
+        .profile-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.2);
+            color: #d8b4fe;
+            text-decoration: none;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .profile-link:hover {
+            background: rgba(139, 92, 246, 0.4);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+
+        .controls {
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-update {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-update:hover:not(:disabled) {
+            background: linear-gradient(135deg, #9333ea 0%, #6d28d9 100%);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-update:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status-info {
+            font-size: 12px;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .codes-container {
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 32px;
+        }
+
+        .codes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .code-card {
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+            padding: 24px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .code-card:hover {
+            border-color: rgba(139, 92, 246, 0.8);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .code-subject {
+            font-size: 12px;
+            color: #a78bfa;
+            flex: 1;
+        }
+
+        .code-timer {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(168, 85, 247, 0.3);
+            color: #d8b4fe;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        .code-timer.warning {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .code-box {
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .code-number {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #d8b4fe;
+            margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-copy {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(168, 85, 247, 0.3);
+            border: none;
+            cursor: pointer;
+            color: #d8b4fe;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .btn-copy:hover {
+            background: rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-delete {
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.2);
+            border: none;
+            cursor: pointer;
+            color: #fca5a5;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        .code-timestamp {
+            font-size: 10px;
+            color: #a78bfa;
+            margin-top: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 64px 32px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: #d8b4fe;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: #a78bfa;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: rgba(34, 197, 94, 0.9);
+            color: white;
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+            font-size: 14px;
+        }
+
+        .toast.error {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        footer {
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 24px;
+            margin-top: 48px;
+            text-align: center;
+            font-size: 12px;
+            color: #a78bfa;
+        }
+
+        .warning-banner {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            color: #fca5a5;
+            font-size: 13px;
+            display: none;
+        }
+
+        .warning-banner.show {
+            display: block;
+        }
+
+        .setup-mode {
+            display: none;
+        }
+
+        .setup-mode.show {
+            display: block;
+        }
+
+        .setup-container {
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .setup-container h2 {
+            color: #d8b4fe;
+            margin-bottom: 16px;
+        }
+
+        .setup-container p {
+            color: #a78bfa;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .setup-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+            color: #d8b4fe;
+            font-size: 14px;
+        }
+
+        .setup-input::placeholder {
+            color: #a78bfa;
+        }
+
+        .setup-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .setup-btn:hover {
+            background: linear-gradient(135deg, #9333ea 0%, #6d28d9 100%);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .codes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .code-header {
+                flex-direction: column;
+            }
+
+            .code-timer {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Setup Mode -->
+    <div class="setup-mode" id="setupMode">
+        <div class="setup-container">
+            <h2>⚙️ Configuração Inicial</h2>
+            <p>Para usar este site, você precisa de uma conta de email do mail.tm. Se não tiver, crie uma em <a href="https://mail.tm" target="_blank" style="color: #d8b4fe;">mail.tm</a></p>
+            <input type="email" class="setup-input" id="setupEmail" placeholder="seu-email@mail.tm" />
+            <input type="password" class="setup-input" id="setupPassword" placeholder="Sua senha" />
+            <button class="setup-btn" onclick="saveSetup()">Conectar</button>
+            <p style="margin-top: 16px; font-size: 12px; color: #a78bfa;">
+                Suas credenciais são armazenadas apenas no seu navegador
+            </p>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" style="display: none;">
+        <header>
+            <div class="header-container">
+                <div class="header-left">
+                    <div class="logo">FB</div>
+                    <div class="header-text">
+                        <h1>FbgaminGGMAX - Perplexity</h1>
+                        <p>Monitore seus códigos em tempo real</p>
+                    </div>
+                </div>
+                <a href="https://ggmax.com.br/perfil/FBgaming" target="_blank" class="profile-link">
+                    Perfil ↗
+                </a>
+            </div>
+        </header>
+
+        <main>
+            <div class="controls">
+                <div class="controls-left">
+                    <button class="btn-update" id="updateBtn">🔄 Atualizar</button>
+                    <div class="status-info">
+                        <span class="status-dot"></span>
+                        Última atualização: <span id="lastUpdate">--:--:--</span>
+                    </div>
+                </div>
+                <div class="status-info">
+                    Códigos ativos: <span id="activeCodes" style="font-weight: bold; color: #d8b4fe;">0</span>
+                </div>
+            </div>
+
+            <div class="warning-banner" id="warningBanner">
+                ⚠️ Os códigos vão ser apagados em <span id="warningCountdown">5m</span>
+            </div>
+
+            <div class="codes-container">
+                <div class="codes-grid" id="codesGrid">
+                    <div class="empty-state">
+                        <div class="empty-icon">⏳</div>
+                        <h3>Carregando...</h3>
+                        <p>Buscando códigos do mail.tm</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Códigos expiram automaticamente após 1 hora • Atualização a cada 10 segundos • <a href="#" onclick="logout()" style="color: #d8b4fe; text-decoration: none;">Desconectar</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÕES
+        // ============================================
+        const CONFIG = {
+            AUTO_REFRESH_INTERVAL: 10000, // 10 segundos
+            CODE_EXPIRATION_TIME: 3600000, // 1 hora
+            WARNING_TIME: 300000, // 5 minutos antes da expiração
+            API_BASE: 'https://api.mail.tm'
+        };
+
+        // ============================================
+        // ESTADO GLOBAL
+        // ============================================
+        let state = {
+            codes: [],
+            email: localStorage.getItem('mail_email') || null,
+            password: localStorage.getItem('mail_password') || null,
+            token: localStorage.getItem('mail_token') || null,
+            accountId: localStorage.getItem('mail_account_id') || null,
+            deletedCodes: JSON.parse(localStorage.getItem('deleted_codes') || '[]'),
+            lastUpdate: null,
+            isLoading: false
+        };
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        function initApp() {
+            if (state.email && state.password) {
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('setupMode').classList.remove('show');
+                setupEventListeners();
+                fetchCodes();
+                setInterval(fetchCodes, CONFIG.AUTO_REFRESH_INTERVAL);
+                setInterval(updateUI, 1000);
+                setInterval(updateWarningCountdown, 1000);
+            } else {
+                document.getElementById('setupMode').classList.add('show');
+                document.getElementById('mainApp').style.display = 'none';
+            }
+        }
+
+        function saveSetup() {
+            const email = document.getElementById('setupEmail').value.trim();
+            const password = document.getElementById('setupPassword').value.trim();
+
+            if (!email || !password) {
+                showToast('❌ Preencha email e senha', true);
+                return;
+            }
+
+            localStorage.setItem('mail_email', email);
+            localStorage.setItem('mail_password', password);
+
+            state.email = email;
+            state.password = password;
+            state.token = null;
+            state.accountId = null;
+
+            localStorage.removeItem('mail_token');
+            localStorage.removeItem('mail_account_id');
+
+            initApp();
+        }
+
+        function logout() {
+            localStorage.removeItem('mail_email');
+            localStorage.removeItem('mail_password');
+            localStorage.removeItem('mail_token');
+            localStorage.removeItem('mail_account_id');
+            state = {
+                codes: [],
+                email: null,
+                password: null,
+                token: null,
+                accountId: null,
+                deletedCodes: [],
+                lastUpdate: null,
+                isLoading: false
+            };
+            initApp();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('updateBtn').addEventListener('click', fetchCodes);
+        }
+
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${isError ? 'error' : ''}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function extractCodeFromText(text) {
+            if (!text) return null;
+            
+            const patterns = [
+                /token=([A-Za-z0-9]+)/i,
+                /código[:\s]+([A-Za-z0-9]+)/i,
+                /code[:\s]+([A-Za-z0-9]+)/i,
+                /\b([A-Z0-9]{6})\b/,
+                /(\d{6})/
+            ];
+
+            for (const pattern of patterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    return match[1];
+                }
+            }
+            return null;
+        }
+
+        function getTimeRemaining(expiresAt) {
+            const now = Date.now();
+            const remaining = Math.max(0, expiresAt - now);
+            const seconds = Math.floor(remaining / 1000);
+
+            if (seconds <= 0) return 'Expirado';
+            if (seconds < 60) return `${seconds}s`;
+            const minutes = Math.floor(seconds / 60);
+            return `${minutes}m ${seconds % 60}s`;
+        }
+
+        // ============================================
+        // AUTENTICAÇÃO COM MAIL.TM
+        // ============================================
+        async function authenticate() {
+            try {
+                // Passo 1: Obter domínios disponíveis
+                const domainsResponse = await fetch(`${CONFIG.API_BASE}/domains`);
+                if (!domainsResponse.ok) throw new Error('Falha ao obter domínios');
+
+                const domainsData = await domainsResponse.json();
+                const domains = domainsData['hydra:member'] || [];
+
+                if (domains.length === 0) throw new Error('Nenhum domínio disponível');
+
+                // Se o email fornecido já tem domínio, usar como está
+                let email = state.email;
+                if (!email.includes('@')) {
+                    const domain = domains[0];
+                    email = `${state.email}@${domain.domain}`;
+                }
+
+                // Passo 2: Criar conta (ou ignorar se já existe)
+                await fetch(`${CONFIG.API_BASE}/accounts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: email,
+                        password: state.password,
+                    }),
+                }).catch(() => {}); // Ignorar erro se conta já existe
+
+                // Passo 3: Fazer login
+                const loginResponse = await fetch(`${CONFIG.API_BASE}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        address: email,
+                        password: state.password,
+                    }),
+                });
+
+                if (!loginResponse.ok) {
+                    throw new Error('Falha na autenticação. Verifique email e senha.');
+                }
+
+                const loginData = await loginResponse.json();
+                const token = loginData.token;
+
+                // Extrair accountId do token JWT
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const accountId = payload.id;
+
+                // Salvar no localStorage
+                localStorage.setItem('mail_token', token);
+                localStorage.setItem('mail_account_id', accountId);
+
+                state.token = token;
+                state.accountId = accountId;
+
+                return { token, accountId };
+            } catch (error) {
+                console.error('Erro de autenticação:', error);
+                showToast(`❌ ${error.message}`, true);
+                return null;
+            }
+        }
+
+        // ============================================
+        // BUSCAR CÓDIGOS
+        // ============================================
+        async function fetchCodes() {
+            if (state.isLoading) return;
+
+            state.isLoading = true;
+            document.getElementById('updateBtn').disabled = true;
+
+            try {
+                // Garantir que temos token
+                if (!state.token || !state.accountId) {
+                    const auth = await authenticate();
+                    if (!auth) {
+                        state.isLoading = false;
+                        document.getElementById('updateBtn').disabled = false;
+                        return;
+                    }
+                }
+
+                // Buscar mensagens
+                const response = await fetch(
+                    `${CONFIG.API_BASE}/accounts/${state.accountId}/messages`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${state.token}`,
+                            'Accept': 'application/json',
+                        },
+                    }
+                );
+
+                if (response.status === 401) {
+                    // Token expirou
+                    state.token = null;
+                    state.accountId = null;
+                    localStorage.removeItem('mail_token');
+                    localStorage.removeItem('mail_account_id');
+                    return fetchCodes(); // Tentar novamente
+                }
+
+                if (!response.ok) {
+                    throw new Error('Falha ao buscar mensagens');
+                }
+
+                const data = await response.json();
+                const messages = data['hydra:member'] || [];
+
+                // Processar mensagens
+                state.codes = messages
+                    .map(msg => {
+                        const code = extractCodeFromText(msg.intro || msg.subject || '');
+                        if (!code) return null;
+
+                        return {
+                            id: msg.id,
+                            code: code,
+                            subject: msg.subject || 'Código recebido',
+                            intro: msg.intro || '',
+                            from: msg.from?.address || 'desconhecido',
+                            createdAt: new Date(msg.createdAt),
+                            expiresAt: new Date(msg.createdAt).getTime() + CONFIG.CODE_EXPIRATION_TIME,
+                        };
+                    })
+                    .filter(code => code !== null && !state.deletedCodes.includes(code.id))
+                    .sort((a, b) => b.createdAt - a.createdAt);
+
+                state.lastUpdate = new Date();
+                updateUI();
+                showToast('✅ Códigos atualizados!');
+            } catch (error) {
+                console.error('Erro ao buscar códigos:', error);
+                showToast(`❌ ${error.message}`, true);
+            } finally {
+                state.isLoading = false;
+                document.getElementById('updateBtn').disabled = false;
+            }
+        }
+
+        // ============================================
+        // INTERFACE DO USUÁRIO
+        // ============================================
+        function updateUI() {
+            const grid = document.getElementById('codesGrid');
+            const activeCodes = document.getElementById('activeCodes');
+            const lastUpdate = document.getElementById('lastUpdate');
+
+            activeCodes.textContent = state.codes.length;
+
+            if (state.lastUpdate) {
+                lastUpdate.textContent = formatTime(state.lastUpdate);
+            }
+
+            // Remover códigos expirados
+            const now = Date.now();
+            state.codes = state.codes.filter(code => code.expiresAt > now);
+
+            if (state.codes.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>Nenhum código encontrado</h3>
+                        <p>Clique em Atualizar para buscar</p>
+                    </div>
+                `;
+                document.getElementById('warningBanner').classList.remove('show');
+                return;
+            }
+
+            grid.innerHTML = state.codes.map(code => {
+                const timeRemaining = getTimeRemaining(code.expiresAt);
+                const isWarning = (code.expiresAt - now) < CONFIG.WARNING_TIME;
+
+                return `
+                    <div class="code-card">
+                        <div class="code-header">
+                            <div class="code-subject">${escapeHtml(code.subject)}</div>
+                            <div class="code-timer ${isWarning ? 'warning' : ''}">
+                                ${timeRemaining}
+                            </div>
+                        </div>
+                        <div class="code-box">
+                            <div class="code-number">${escapeHtml(code.code)}</div>
+                            <div class="code-actions">
+                                <button class="btn-copy" onclick="copyCode('${escapeHtml(code.code)}')">
+                                    📋 Copiar
+                                </button>
+                                <button class="btn-delete" onclick="deleteCode('${code.id}')">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                        <div class="code-timestamp">
+                            ${code.createdAt.toLocaleTimeString('pt-BR')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Mostrar aviso se há códigos próximos de expirar
+            const hasWarning = state.codes.some(code => (code.expiresAt - now) < CONFIG.WARNING_TIME);
+            if (hasWarning) {
+                document.getElementById('warningBanner').classList.add('show');
+                updateWarningCountdown();
+            } else {
+                document.getElementById('warningBanner').classList.remove('show');
+            }
+        }
+
+        function updateWarningCountdown() {
+            const now = Date.now();
+            const firstWarning = state.codes.find(code => (code.expiresAt - now) < CONFIG.WARNING_TIME);
+
+            if (firstWarning) {
+                const remaining = Math.max(0, firstWarning.expiresAt - now);
+                const seconds = Math.floor(remaining / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+
+                document.getElementById('warningCountdown').textContent = 
+                    minutes > 0 ? `${minutes}m ${secs}s` : `${secs}s`;
+            }
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('✅ Código copiado com sucesso!');
+            }).catch(() => {
+                showToast('❌ Erro ao copiar código', true);
+            });
+        }
+
+        function deleteCode(codeId) {
+            state.deletedCodes.push(codeId);
+            localStorage.setItem('deleted_codes', JSON.stringify(state.deletedCodes));
+            state.codes = state.codes.filter(code => code.id !== codeId);
+            updateUI();
+            showToast('🗑️ Código deletado');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // INICIAR APLICAÇÃO
+        // ============================================
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
+
